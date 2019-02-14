@@ -33,7 +33,7 @@
         <sonar-maven-plugin.version>3.5.0.1254</sonar-maven-plugin.version>
         <license-check-maven-plugin.version>0.5.3</license-check-maven-plugin.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
-        <sonar.projectKey>3a-security-consumer-lib</sonar.projectKey>
+        <sonar.projectKey>3a-limited_security-consumer-lib</sonar.projectKey>
         <sonar.organization>3a-limited</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <springfox-version>2.7.0</springfox-version>
