@@ -1,0 +1,56 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+        <server>
+            <id>3a-limited</id>
+            <username>${env.CONFLUENCE_USERNAME}</username>
+            <password>${env.CONFLUENCE_PASSWORD}</password>
+        </server>
+        <server>
+            <id>libs-release-local</id>
+            <username>${env.ARTIFACTORY_USER}</username>
+            <password>${env.ARTIFACTORY_PWD}</password>
+        </server>
+    </servers>
+
+    <profiles>
+        <profile>
+            <id>artifactory</id>
+            <repositories>
+                <repository>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <id>JCenter</id>
+                    <url>https://jcenter.bintray.com</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>libs-release-local</id>
+                    <url>https://aaa.jfrog.io/aaa/libs-release-local</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>JCenter-Plugin</id>
+                    <url>https://jcenter.bintray.com</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>artifactory</activeProfile>
+    </activeProfiles>
+
+    <mirrors>
+        <mirror>
+            <id>consolidated-repositories</id>
+            <url>https://repo.maven.apache.org/maven2/</url>
+            <mirrorOf>JCenter,!libs-release-local</mirrorOf>
+        </mirror>
+    </mirrors>
+
+
+</settings>

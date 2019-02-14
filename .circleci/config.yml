@@ -1,0 +1,92 @@
+version: 2
+
+jobs:
+
+  build:
+
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+        environment:
+
+    working_directory: ~/security-consumer-lib/
+
+    environment:
+      - MAVEN_OPTS: -Xmx256m
+
+
+    steps:
+
+      - checkout
+
+      - setup_remote_docker
+
+      - run:
+          name: mvn install
+          command: mvn -s .circleci.settings.xml clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+
+      - store_artifacts:
+          path: target/security-consumer-lib-${CIRCLE_BUILD_NUM}.jar
+
+      - run:
+          name: mvn deploy
+          command: mvn -s .circleci.settings.xml deploy
+
+  reports:
+
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+
+    working_directory: ~/security-consumer-lib/
+
+    environment:
+      - MAVEN_OPTS: -Xmx512m
+
+
+    steps:
+
+      - checkout
+
+      - setup_remote_docker
+
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+
+      - run:
+          name: mvn install
+          command: mvn -s .circleci.settings.xml clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -DupdateDependencies=true
+
+      # add to nightly builds
+      - run:
+          name: generate and publish reports
+          command: mvn -s .circleci.settings.xml site -P reports -DupdateDependencies=true -X
+
+      - store_test_results:
+          path: target/site
+
+      - store_artifacts:
+          path: target/site
+
+
+workflows:
+  version: 2
+  build_and_push:
+    jobs:
+      - build
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 1 * * *"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - reports
