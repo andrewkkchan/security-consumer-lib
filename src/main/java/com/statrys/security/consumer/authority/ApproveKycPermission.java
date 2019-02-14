@@ -1,4 +1,4 @@
-package com.statrys.security.authority;
+package com.statrys.security.consumer.authority;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('P10003')")
-public @interface RejectKycPermission {
+@PreAuthorize("hasAuthority('P10002')")
+public @interface ApproveKycPermission {
 }

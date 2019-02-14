@@ -1,4 +1,4 @@
-package com.statrys.security.authority;
+package com.statrys.security.consumer.authority;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
