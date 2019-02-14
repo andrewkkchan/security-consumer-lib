@@ -1,5 +1,6 @@
 package com.statrys.security.consumer.config;
 
+import com.statrys.security.consumer.filter.JWTAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.POST, "/password").permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
