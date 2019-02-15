@@ -2,6 +2,7 @@ package com.statrys.security.consumer.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -9,6 +10,7 @@ import com.statrys.security.consumer.constant.SecurityConstants;
 import com.statrys.security.consumer.model.WellKnownJsonUrl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -21,6 +23,7 @@ import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static com.auth0.jwt.algorithms.Algorithm.RSA256;
 
@@ -64,13 +67,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             com.nimbusds.jose.jwk.RSAKey rsaKey = (com.nimbusds.jose.jwk.RSAKey) jwkSet.getKeys().get(0);
             RSAPublicKey rsaPublicKey = rsaKey.toRSAPublicKey();
             Algorithm algorithm = RSA256(rsaPublicKey, null);
-            String peakNumber = JWT.require(algorithm)
+            DecodedJWT decodedJWT = JWT.require(algorithm)
                     .build()
-                    .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
-                    .getSubject();
+                    .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""));
+            String principal = decodedJWT.getSubject();
 
-            if (peakNumber != null) {
-                return new UsernamePasswordAuthenticationToken(peakNumber, null, new ArrayList<>());
+            if (principal != null) {
+                return new UsernamePasswordAuthenticationToken(principal, null, decodedJWT.getClaim(SecurityConstants.AUTHORITIES).asList(String.class)
+                        .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
             }
             return null;
         }
