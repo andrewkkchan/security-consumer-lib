@@ -1,5 +1,6 @@
 package com.statrys.security.consumer.config;
 
+import com.google.common.collect.ImmutableList;
 import com.statrys.security.consumer.filter.JWTAuthorizationFilter;
 import com.statrys.security.consumer.model.WellKnownJsonUrl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,12 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        final CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(ImmutableList.of("*"));
+        configuration.setAllowedMethods(ImmutableList.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type"));
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
