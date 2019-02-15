@@ -26,6 +26,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .mvcMatchers( "/health", "/credentials").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/user").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/password").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/.well-known/jwks.json").permitAll()
                 .anyRequest().authenticated()
