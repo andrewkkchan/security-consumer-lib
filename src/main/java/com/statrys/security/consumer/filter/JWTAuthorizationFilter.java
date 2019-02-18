@@ -8,12 +8,12 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.statrys.security.consumer.constant.SecurityConstants;
 import com.statrys.security.consumer.model.WellKnownJsonUrl;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,16 +40,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String header = request.getHeader(SecurityConstants.HEADER_STRING);
-
-        if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+        String token = request.getHeader(SecurityConstants.HEADER_STRING);
+        if (token == null || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             chain.doFilter(request, response);
             return;
         }
-
         UsernamePasswordAuthenticationToken authentication;
         try {
-            authentication = getAuthentication(request);
+            authentication = getAuthentication(token);
         } catch (ParseException | JOSEException e) {
             throw new AuthenticationCredentialsNotFoundException("Fail to get Authentication");
         }
@@ -59,33 +56,28 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         chain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws IOException, ParseException, JOSEException {
-        String token = request.getHeader(SecurityConstants.HEADER_STRING);
-        if (token != null) {
-            // parse the token.
-            JWKSet jwkSet = JWKSet.load(new URL(wellKnownJsonUrl.getUrl()));
-            if (jwkSet.getKeys().isEmpty() || !(jwkSet.getKeys().get(0) instanceof RSAKey)) {
-                throw new AuthenticationCredentialsNotFoundException("Fail to get JWKS");
-            }
-            com.nimbusds.jose.jwk.RSAKey rsaKey = (com.nimbusds.jose.jwk.RSAKey) jwkSet.getKeys().get(0);
-            RSAPublicKey rsaPublicKey = rsaKey.toRSAPublicKey();
-            Algorithm algorithm = RSA256(rsaPublicKey, null);
-            DecodedJWT decodedJWT = JWT.require(algorithm)
-                    .build()
-                    .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""));
-            String principal = decodedJWT.getSubject();
-            List<SimpleGrantedAuthority> simpleGrantedAuthorities = null;
-            if (decodedJWT.getClaim(SecurityConstants.AUTHORITIES) != null) {
-                simpleGrantedAuthorities = decodedJWT.getClaim(SecurityConstants.AUTHORITIES).asList(String.class)
-                        .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-            }
-            if (principal != null) {
-                return new UsernamePasswordAuthenticationToken(principal, null, simpleGrantedAuthorities);
-            } else {
-                throw new AuthenticationCredentialsNotFoundException("Fail to parse the principal from the token");
-            }
+    private UsernamePasswordAuthenticationToken getAuthentication(@NonNull String token) throws IOException, ParseException, JOSEException {
+        // parse the token.
+        JWKSet jwkSet = JWKSet.load(new URL(wellKnownJsonUrl.getUrl()));
+        if (jwkSet.getKeys().isEmpty() || !(jwkSet.getKeys().get(0) instanceof RSAKey)) {
+            throw new AuthenticationCredentialsNotFoundException("Fail to get JWKS");
+        }
+        RSAKey rsaKey = (RSAKey) jwkSet.getKeys().get(0);
+        RSAPublicKey rsaPublicKey = rsaKey.toRSAPublicKey();
+        Algorithm algorithm = RSA256(rsaPublicKey, null);
+        DecodedJWT decodedJWT = JWT.require(algorithm)
+                .build()
+                .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""));
+        String principal = decodedJWT.getSubject();
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = null;
+        if (decodedJWT.getClaim(SecurityConstants.AUTHORITIES) != null) {
+            simpleGrantedAuthorities = decodedJWT.getClaim(SecurityConstants.AUTHORITIES).asList(String.class)
+                    .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        }
+        if (principal != null) {
+            return new UsernamePasswordAuthenticationToken(principal, null, simpleGrantedAuthorities);
         } else {
-            throw new AuthenticationCredentialsNotFoundException("Fail to get the token header");
+            throw new AuthenticationCredentialsNotFoundException("Fail to parse the principal from the token");
         }
     }
 }
