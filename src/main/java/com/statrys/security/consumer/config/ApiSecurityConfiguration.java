@@ -2,12 +2,13 @@ package com.statrys.security.consumer.config;
 
 import com.google.common.collect.ImmutableList;
 import com.statrys.security.consumer.filter.JWTAuthorizationFilter;
+import com.statrys.security.consumer.helper.ConsumerAlgorithmProvider;
 import com.statrys.security.consumer.helper.JWKSetLoader;
+import com.statrys.security.consumer.helper.JWTDecoder;
 import com.statrys.security.consumer.model.WellKnownJsonUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,11 +23,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final WellKnownJsonUrl wellKnownJsonUrl;
     private final JWKSetLoader jwkSetLoader;
+    private final ConsumerAlgorithmProvider consumerAlgorithmProvider;
+    private final JWTDecoder jwtDecoder;
 
     @Autowired
-    public ApiSecurityConfiguration(WellKnownJsonUrl wellKnownJsonUrl, JWKSetLoader jwkSetLoader) {
+    public ApiSecurityConfiguration(WellKnownJsonUrl wellKnownJsonUrl, JWKSetLoader jwkSetLoader, ConsumerAlgorithmProvider consumerAlgorithmProvider, JWTDecoder jwtDecoder) {
         this.wellKnownJsonUrl = wellKnownJsonUrl;
         this.jwkSetLoader = jwkSetLoader;
+        this.consumerAlgorithmProvider = consumerAlgorithmProvider;
+        this.jwtDecoder = jwtDecoder;
     }
 
 
@@ -42,7 +47,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET, "/.well-known/jwks.json").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), wellKnownJsonUrl, jwkSetLoader))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), wellKnownJsonUrl, jwkSetLoader, consumerAlgorithmProvider, jwtDecoder))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
