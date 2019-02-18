@@ -7,6 +7,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.statrys.security.consumer.constant.SecurityConstants;
+import com.statrys.security.consumer.helper.JWKSetLoader;
 import com.statrys.security.consumer.model.WellKnownJsonUrl;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -21,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.List;
@@ -31,11 +31,13 @@ import static com.auth0.jwt.algorithms.Algorithm.RSA256;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private final WellKnownJsonUrl wellKnownJsonUrl;
+    private final JWKSetLoader jwkSetLoader;
 
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, WellKnownJsonUrl wellKnownJsonUrl) {
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, WellKnownJsonUrl wellKnownJsonUrl, JWKSetLoader jwkSetLoader) {
         super(authenticationManager);
         this.wellKnownJsonUrl = wellKnownJsonUrl;
+        this.jwkSetLoader = jwkSetLoader;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(@NonNull String token) throws IOException, ParseException, JOSEException {
         // parse the token.
-        JWKSet jwkSet = JWKSet.load(new URL(wellKnownJsonUrl.getUrl()));
+        JWKSet jwkSet = jwkSetLoader.load(wellKnownJsonUrl);
         if (jwkSet.getKeys().isEmpty() || !(jwkSet.getKeys().get(0) instanceof RSAKey)) {
             throw new AuthenticationCredentialsNotFoundException("Fail to get JWKS");
         }

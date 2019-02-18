@@ -2,10 +2,12 @@ package com.statrys.security.consumer.config;
 
 import com.google.common.collect.ImmutableList;
 import com.statrys.security.consumer.filter.JWTAuthorizationFilter;
+import com.statrys.security.consumer.helper.JWKSetLoader;
 import com.statrys.security.consumer.model.WellKnownJsonUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,8 +20,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private final WellKnownJsonUrl wellKnownJsonUrl;
+    private final JWKSetLoader jwkSetLoader;
+
     @Autowired
-    WellKnownJsonUrl wellKnownJsonUrl;
+    public ApiSecurityConfiguration(WellKnownJsonUrl wellKnownJsonUrl, JWKSetLoader jwkSetLoader) {
+        this.wellKnownJsonUrl = wellKnownJsonUrl;
+        this.jwkSetLoader = jwkSetLoader;
+    }
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and()
@@ -32,7 +42,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET, "/.well-known/jwks.json").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), wellKnownJsonUrl))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), wellKnownJsonUrl, jwkSetLoader))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
@@ -49,4 +59,5 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }
