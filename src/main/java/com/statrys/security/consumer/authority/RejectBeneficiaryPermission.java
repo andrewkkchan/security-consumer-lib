@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('P10007')")
-public @interface ApproveBeneficiaryPermission {
+@PreAuthorize("hasAuthority('P10008')")
+public @interface RejectBeneficiaryPermission {
 }

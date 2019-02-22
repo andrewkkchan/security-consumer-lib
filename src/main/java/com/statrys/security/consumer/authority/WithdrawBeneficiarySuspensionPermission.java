@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('P10009')")
+@PreAuthorize("hasAuthority('P10010')")
 public @interface WithdrawBeneficiarySuspensionPermission {
 }
