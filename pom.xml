@@ -62,11 +62,13 @@
                         </goals>
                         <configuration>
                             <publisher>
-                                <contextUrl>https://aaa.jfrog.io/aaa/</contextUrl>
+                                <contextUrl>https://statrys.jfrog.io/statrys/</contextUrl>
+                                <!--suppress UnresolvedMavenProperty -->
                                 <username>${env.ARTIFACTORY_USER}</username>
+                                <!--suppress UnresolvedMavenProperty -->
                                 <password>${env.ARTIFACTORY_PWD}</password>
-                                <repoKey>libs-release-local</repoKey>
-                                <snapshotRepoKey>libs-snapshot-local</snapshotRepoKey>
+                                <repoKey>lib-release-local</repoKey>
+                                <snapshotRepoKey>lib-snapshot-local</snapshotRepoKey>
                             </publisher>
                         </configuration>
                     </execution>
