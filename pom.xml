@@ -41,10 +41,10 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
     <scm>
-        <connection>scm:git:https://username@bitbucket.org/3a-limited/security-consumer-lib.git</connection>
-        <developerConnection>scm:git:https://developer@bitbucket.org/3a-limited/security-consumer-lib.git</developerConnection>
+        <connection>scm:git:https://username@bitbucket.org/statrys/security-consumer-lib.git</connection>
+        <developerConnection>scm:git:https://developer@bitbucket.org/statrys/security-consumer-lib.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://bitbucket.org/3a-limited/security-consumer-lib/src/master/</url>
+        <url>https://bitbucket.org/statrys/security-consumer-lib/src/master/</url>
     </scm>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>com.statrys</groupId>
             <artifactId>common-lib</artifactId>
-            <version>1.0.0</version>
+            <version>3.0.0</version>
         </dependency>
 
         <dependency>

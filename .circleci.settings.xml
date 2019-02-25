@@ -2,12 +2,12 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <servers>
         <server>
-            <id>3a-limited</id>
+            <id>confluence</id>
             <username>${env.CONFLUENCE_USERNAME}</username>
             <password>${env.CONFLUENCE_PASSWORD}</password>
         </server>
         <server>
-            <id>libs-release-local</id>
+            <id>lib-release-local</id>
             <username>${env.ARTIFACTORY_USER}</username>
             <password>${env.ARTIFACTORY_PWD}</password>
         </server>
@@ -19,7 +19,7 @@
             <repositories>
                 <repository>
                     <snapshots>
-                        <enabled>true</enabled>
+                        <enabled>false</enabled>
                     </snapshots>
                     <id>JCenter</id>
                     <url>https://jcenter.bintray.com</url>
@@ -28,8 +28,8 @@
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
-                    <id>libs-release-local</id>
-                    <url>https://aaa.jfrog.io/aaa/libs-release-local</url>
+                    <id>lib-release-local</id>
+                    <url>https://statrys.jfrog.io/statrys/lib-release-local</url>
                 </repository>
             </repositories>
             <pluginRepositories>
@@ -48,9 +48,8 @@
         <mirror>
             <id>consolidated-repositories</id>
             <url>https://repo.maven.apache.org/maven2/</url>
-            <mirrorOf>JCenter,!libs-release-local</mirrorOf>
+            <mirrorOf>JCenter,!lib-release-local</mirrorOf>
         </mirror>
     </mirrors>
-
 
 </settings>
