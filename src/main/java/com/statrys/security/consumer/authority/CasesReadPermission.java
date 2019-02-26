@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('P10000')")
-public @interface InitiateKycPermission {
+@PreAuthorize("hasAuthority('P10024')")
+public @interface CasesReadPermission {
 }
