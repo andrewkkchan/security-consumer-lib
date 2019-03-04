@@ -6,20 +6,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 public class ConsumerTokenServiceImpl implements ConsumerTokenService {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Override
-    public UUID getUserSlug() {
+    public String getCurrentUserName() {
         if (SecurityContextHolder.getContext().getAuthentication() != null
                 && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null
                 && !SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().isEmpty()) {
             String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            return UUID.fromString(principal);
+            return principal;
         }
         LOGGER.warn("No user slug found in security context");
         return null;
