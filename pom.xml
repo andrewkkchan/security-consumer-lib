@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.statrys</groupId>
+    <groupId>com.industrieit.dragon</groupId>
     <artifactId>security-consumer-lib</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -37,43 +37,11 @@
         <sonar.organization>statrys</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <springfox-version>2.7.0</springfox-version>
-        <sonar.login>${env.SONAR_TOKEN}</sonar.login>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
-    <scm>
-        <connection>scm:git:https://username@bitbucket.org/statrys/security-consumer-lib.git</connection>
-        <developerConnection>scm:git:https://developer@bitbucket.org/statrys/security-consumer-lib.git</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://bitbucket.org/statrys/security-consumer-lib/src/master/</url>
-    </scm>
+
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
-            <plugin>
-                <groupId>org.jfrog.buildinfo</groupId>
-                <artifactId>artifactory-maven-plugin</artifactId>
-                <version>2.6.1</version>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <id>build-info</id>
-                        <goals>
-                            <goal>publish</goal>
-                        </goals>
-                        <configuration>
-                            <publisher>
-                                <contextUrl>https://statrys.jfrog.io/statrys/</contextUrl>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <username>${env.ARTIFACTORY_USER}</username>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <password>${env.ARTIFACTORY_PWD}</password>
-                                <repoKey>lib-release-local</repoKey>
-                                <snapshotRepoKey>lib-snapshot-local</snapshotRepoKey>
-                            </publisher>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -91,9 +59,9 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>com.statrys</groupId>
+            <groupId>com.industrieit.dragon</groupId>
             <artifactId>common-lib</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
