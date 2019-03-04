@@ -46,7 +46,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.POST, "/password").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/password/recovery").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/.well-known/jwks.json").permitAll()
-                .mvcMatchers(HttpMethod.POST, "/login").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/user/login").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/sign-up").permitAll()
                 .anyRequest().authenticated()
                 .and()
