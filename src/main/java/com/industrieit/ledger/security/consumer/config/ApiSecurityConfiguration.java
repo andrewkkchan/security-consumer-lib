@@ -42,7 +42,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .mvcMatchers( "/health", "/credentials").permitAll()
                 .antMatchers("/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security",
-                        "/swagger-ui.html", "/webjars/**","/swagger-resources/configuration/ui","/swagger-ui.html","/graphiql").permitAll()
+                        "/swagger-ui.html", "/webjars/**","/swagger-resources/configuration/ui","/swagger-ui.html").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/user").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/password").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/password/recovery").permitAll()
