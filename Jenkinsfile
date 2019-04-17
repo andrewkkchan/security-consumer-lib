@@ -6,11 +6,6 @@ pipeline {
                 sh 'mvn clean verify'
             }
         }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
         stage('Install') {
             steps {
                 sh 'mvn install'
