@@ -11,7 +11,7 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage('Deploy') {
+        stage('Install') {
             steps {
                 sh 'mvn install'
             }
